@@ -1,0 +1,36 @@
+{
+  "name": "modal-element",
+  "version": "1.0.0",
+  "description": "A basic modal element running on virtual dom",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo example.js:bundle.js --live",
+    "gh": "browserify example.js -o bundle.js",
+    "test": "standard --format"
+  },
+  "author": "Kyle Robinson Young <kyle@dontkry.com> (http://dontkry.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:shama/modal-element.git"
+  },
+  "keywords": [
+    "virtual",
+    "dom",
+    "element",
+    "modal"
+  ],
+  "dependencies": {
+    "attach-css": "^1.0.0",
+    "base-element": "^2.2.0",
+    "inherits": "^2.0.1",
+    "object-assign": "^2.0.0"
+  },
+  "devDependencies": {
+    "budo": "^4.0.0",
+    "global": "^4.3.0",
+    "standard": "^3.7.1",
+    "virtual-dom": "^2.0.1",
+    "zuul": "^3.0.0"
+  }
+}

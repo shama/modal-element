@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: Helvetica, sans-serif;
+  color: #212121;
+}
+
+button.open-modal {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  padding: 1em;
+  font-size: 2em;
+  width: 10em;
+  margin-left: -5em;
+  cursor: pointer;
+}
+
+.modal {
+  background-color: #fff;
+  width: 30em;
+  padding: 1em;
+  border-radius: 3px;
+}
+.modal-overlay {
+  background-color: rgba(0, 0, 0, .3);
+}
