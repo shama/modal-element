@@ -21,10 +21,11 @@
     "modal"
   ],
   "dependencies": {
-    "attach-css": "^1.0.0",
+    "attach-css": "^1.1.0",
     "base-element": "^2.2.0",
     "inherits": "^2.0.1",
-    "object-assign": "^2.0.0"
+    "object-assign": "^2.0.0",
+    "prop-bind": "^1.0.0"
   },
   "devDependencies": {
     "budo": "^4.0.0",

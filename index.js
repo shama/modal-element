@@ -2,6 +2,7 @@ var BaseElement = require('base-element')
 var inherits = require('inherits')
 var attachCSS = require('attach-css')
 var objectAssign = require('object-assign')
+var propBind = require('prop-bind')
 
 function ModalElement (el) {
   if (!(this instanceof ModalElement)) return new ModalElement(el)
@@ -10,15 +11,16 @@ function ModalElement (el) {
     className: 'modal',
     tagName: 'div'
   }
-  this.className = this.modal.className + '-overlay'
+  propBind(this, 'className', ':modal-overlay shown:modal-show:modal-hide')
   this.tagName = 'div'
   this._content = []
   this.shown = false
   this.centerOnLoad = true
   this.on('load', function (node) {
     if (this.centerOnLoad) {
-      this.center(node.childNodes[0])
+      if (this.centerOnLoad) this.center(node.childNodes[0])
     }
+    this.send.apply(this, arguments)
   }.bind(this))
   this.onclick = function (e) {
     this.toggle()
@@ -32,11 +34,10 @@ ModalElement.prototype.render = function (content) {
   this._content = content
   if (this.shown) {
     modal = this.html(this.modal.tagName, this.modal, content)
-    overlay = this.html(this.tagName, this, modal)
+    overlay = this.html(this.tagName, objectAssign({}, this), modal)
   } else {
     overlay = this.html(this.tagName, {
-      className: this.className,
-      style: { display: 'none' }
+      className: this.className
     }, '')
   }
   return this.afterRender(overlay)
@@ -49,6 +50,7 @@ ModalElement.prototype.toggle = function () {
 }
 
 ModalElement.prototype.center = function (modal) {
+  if (!modal) return
   setTimeout(function () {
     objectAssign(modal.style, {
       'margin-left': -(modal.offsetWidth / 2) + 'px',
@@ -60,8 +62,10 @@ ModalElement.prototype.center = function (modal) {
 }
 
 ModalElement.prototype.css = function () {
+  var overlay = '.' + this.className.split(' ')[0]
+  var modal = '.' + this.modal.className
   return attachCSS([
-    '.' + this.className + ' {',
+    overlay + ' {',
     'height: 100%;',
     'width: 100%;',
     'position: fixed;',
@@ -69,11 +73,12 @@ ModalElement.prototype.css = function () {
     'left: 0;',
     'z-index: 9999;',
     '}',
-    '.' + this.modal.className + ' {',
+    overlay + '.modal-hide { display: none; }',
+    modal + ' {',
     'position: fixed;',
     'top: 50%;',
     'left: 50%;',
     'z-index: 9998;',
-    '}'
+    '}',
   ].join('\n'), this.vtree)
 }
