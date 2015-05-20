@@ -32,6 +32,7 @@ var BaseElement = require('base-element')
 var inherits = require('inherits')
 var attachCSS = require('attach-css')
 var objectAssign = require('object-assign')
+var propBind = require('prop-bind')
 
 function ModalElement (el) {
   if (!(this instanceof ModalElement)) return new ModalElement(el)
@@ -40,15 +41,16 @@ function ModalElement (el) {
     className: 'modal',
     tagName: 'div'
   }
-  this.className = this.modal.className + '-overlay'
+  propBind(this, 'className', ':modal-overlay shown:modal-show:modal-hide')
   this.tagName = 'div'
   this._content = []
   this.shown = false
   this.centerOnLoad = true
   this.on('load', function (node) {
     if (this.centerOnLoad) {
-      this.center(node.childNodes[0])
+      if (this.centerOnLoad) this.center(node.childNodes[0])
     }
+    this.send.apply(this, arguments)
   }.bind(this))
   this.onclick = function (e) {
     this.toggle()
@@ -62,11 +64,10 @@ ModalElement.prototype.render = function (content) {
   this._content = content
   if (this.shown) {
     modal = this.html(this.modal.tagName, this.modal, content)
-    overlay = this.html(this.tagName, this, modal)
+    overlay = this.html(this.tagName, objectAssign({}, this), modal)
   } else {
     overlay = this.html(this.tagName, {
-      className: this.className,
-      style: { display: 'none' }
+      className: this.className
     }, '')
   }
   return this.afterRender(overlay)
@@ -79,6 +80,7 @@ ModalElement.prototype.toggle = function () {
 }
 
 ModalElement.prototype.center = function (modal) {
+  if (!modal) return
   setTimeout(function () {
     objectAssign(modal.style, {
       'margin-left': -(modal.offsetWidth / 2) + 'px',
@@ -90,8 +92,10 @@ ModalElement.prototype.center = function (modal) {
 }
 
 ModalElement.prototype.css = function () {
+  var overlay = '.' + this.className.split(' ')[0]
+  var modal = '.' + this.modal.className
   return attachCSS([
-    '.' + this.className + ' {',
+    overlay + ' {',
     'height: 100%;',
     'width: 100%;',
     'position: fixed;',
@@ -99,16 +103,17 @@ ModalElement.prototype.css = function () {
     'left: 0;',
     'z-index: 9999;',
     '}',
-    '.' + this.modal.className + ' {',
+    overlay + '.modal-hide { display: none; }',
+    modal + ' {',
     'position: fixed;',
     'top: 50%;',
     'left: 50%;',
     'z-index: 9998;',
-    '}'
+    '}',
   ].join('\n'), this.vtree)
 }
 
-},{"attach-css":3,"base-element":26,"inherits":61,"object-assign":62}],3:[function(require,module,exports){
+},{"attach-css":3,"base-element":26,"inherits":61,"object-assign":62,"prop-bind":63}],3:[function(require,module,exports){
 var css = require('css')
 
 module.exports = function (src, vtree, opts) {
@@ -1442,7 +1447,7 @@ exports.comment = function(node) {
     return this._comment(node);
 };
 
-},{"fs":63,"path":66,"source-map":14,"source-map-resolve":13,"urix":25}],11:[function(require,module,exports){
+},{"fs":64,"path":67,"source-map":14,"source-map-resolve":13,"urix":25}],11:[function(require,module,exports){
 // Copyright 2014 Simon Lydell
 // X11 (“MIT”) Licensed. (See LICENSE.)
 
@@ -4261,7 +4266,7 @@ function amdefine(module, requireFn) {
 module.exports = amdefine;
 
 }).call(this,require("/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),"/node_modules/attach-css/node_modules/css/node_modules/source-map/node_modules/amdefine/amdefine.js")
-},{"/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":65,"path":66}],25:[function(require,module,exports){
+},{"/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":66,"path":67}],25:[function(require,module,exports){
 // Copyright 2014 Simon Lydell
 // X11 (“MIT”) Licensed. (See LICENSE.)
 
@@ -4280,7 +4285,7 @@ function urix(aPath) {
 
 module.exports = urix
 
-},{"path":66}],26:[function(require,module,exports){
+},{"path":67}],26:[function(require,module,exports){
 module.exports = BaseElement
 
 var document = require('global/document')
@@ -6116,7 +6121,7 @@ if (typeof document !== 'undefined') {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"min-document":64}],61:[function(require,module,exports){
+},{"min-document":65}],61:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -6170,10 +6175,43 @@ module.exports = Object.assign || function (target, source) {
 };
 
 },{}],63:[function(require,module,exports){
+module.exports = function prop_bind (obj, prop, bindings) {
+  if (typeof bindings === 'string') bindings = bindings.split(' ')
+  var raw = []
+  var parsed = Object.create(null)
+  for (var i = 0; i < bindings.length; i++) {
+    var binding = bindings[i]
+    if (binding.slice(0, 1) === ':') {
+      raw.push(binding.slice(1))
+      continue
+    }
+    var parts = binding.split(':')
+    parsed[parts[0]] = [
+      parts[1] ? parts[1] : parts[2] ? '' : parts[0],
+      parts[2] ? parts[2] : ''
+    ]
+  }
+  Object.defineProperty(obj, prop, {
+    enumerable: true,
+    configurable: true,
+    get: function () {
+      var val = Object.keys(parsed).map(function (p) {
+        return obj[p] ? parsed[p][0] : parsed[p][1]
+      })
+      val = raw.concat(val).join(' ').trim()
+      return val
+    },
+    set: function (val) {
+      raw = [val]
+    }
+  })
+}
 
 },{}],64:[function(require,module,exports){
-module.exports=require(63)
+
 },{}],65:[function(require,module,exports){
+module.exports=require(64)
+},{}],66:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -6235,7 +6273,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6463,4 +6501,4 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require("/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":65}]},{},[1])
+},{"/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":66}]},{},[1])
