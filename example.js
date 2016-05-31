@@ -1,27 +1,19 @@
-var Modal = require('./index.js')
-var createElement = require('base-element')
 var document = require('global/document')
+var createModal = require('./index.js')
+var yo = require('yo-yo')
 
-var style = document.createElement('style')
-document.head.appendChild(style)
+var modalContents = yo`<div>
+  <h3>Header</h3>
+  <button onclick=${function () {
+  modal.hide()
+}}>close modal</button>
+</div>`
+var modal = createModal(modalContents)
 
-var modal = new Modal()
-modal.on('load', function () {
-  style.innerHTML = modal.css()
-})
-
-modal.render([
-  modal.html('h3', 'Header'),
-  modal.html('p', 'This is a modal')
-])
-
-var app = createElement(document.body)
-app.render(function () {
-  return this.html('.content', [
-    this.html('button.open-modal', {
-      onclick: function () {
-        modal.toggle()
-      }
-    }, 'open modal')
-  ])
-})
+var root = yo`<div class="content">
+  <button class="open-modal" onclick=${function () {
+  modal.toggle()
+}}>open modal</button>
+  ${modal}
+</div>`
+document.body.appendChild(root)
