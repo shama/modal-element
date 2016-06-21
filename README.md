@@ -37,8 +37,5 @@ Shows the modal and/or overrides the contents.
 #### `modal.hide()`
 Hides the modal.
 
-#### `modal.center()`
-Centers the modal.
-
 # license
 (c) 2016 Kyle Robinson Young. MIT License

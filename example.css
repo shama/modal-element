@@ -29,10 +29,13 @@ button.open-modal {
 
 .modal {
   background-color: #fafafa;
-  width: 30em;
-  padding: 1em;
+  width: 20rem;
+  padding: 1rem;
   border-radius: 3px;
 }
 .modal-overlay {
   background-color: rgba(0, 0, 0, .3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
