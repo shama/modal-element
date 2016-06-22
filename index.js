@@ -8,15 +8,11 @@ module.exports = function modalElement (contents) {
   bindMouseDown()
   function modalShow (newContents) {
     if (newContents) contents = newContents
-    var newel = render(contents)
-    yo.update(el, newel)
-    el = newel
+    el = yo.update(el, render(contents))
     bindMouseDown()
   }
   function modalHide () {
-    var newel = document.createTextNode('')
-    yo.update(el, newel)
-    el = newel
+    el = yo.update(el, document.createTextNode(''))
     unbindMouseDown()
   }
   function modalToggle (newContents) {
