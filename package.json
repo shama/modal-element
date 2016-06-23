@@ -23,6 +23,7 @@
   "dependencies": {
     "global": "^4.3.0",
     "object-assign": "^2.1.1",
+    "on-load": "^2.1.0",
     "yo-yo": "^1.2.1"
   },
   "devDependencies": {
