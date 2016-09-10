@@ -1,6 +1,6 @@
 {
   "name": "modal-element",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A basic modal DOM element",
   "main": "index.js",
   "scripts": {
