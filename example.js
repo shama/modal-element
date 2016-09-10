@@ -5,8 +5,8 @@ var yo = require('yo-yo')
 var modalContents = yo`<div>
   <h3>Oh, hi there!</h3>
   <button onclick=${function () {
-    modal.hide()
-  }}>close me</button>
+  modal.hide()
+}}>close me</button>
 </div>`
 var modal = createModal(modalContents)
 
