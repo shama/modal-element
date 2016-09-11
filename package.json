@@ -6,7 +6,9 @@
   "scripts": {
     "start": "budo example.js:bundle.js",
     "gh": "browserify example.js -o bundle.js",
-    "test": "standard --format"
+    "test:lint": "standard --format",
+    "test:browser": "browserify test/*.js | tape-run",
+    "test": "npm run test:lint && npm run test:browser"
   },
   "author": "Kyle Robinson Young <kyle@dontkry.com> (http://dontkry.com)",
   "license": "MIT",
@@ -27,7 +29,10 @@
     "yo-yo": "^1.2.1"
   },
   "devDependencies": {
+    "browserify": "^13.1.0",
     "budo": "^8.3.0",
-    "standard": "^3.7.1"
+    "standard": "^3.7.1",
+    "tape": "^4.6.0",
+    "tape-run": "^2.1.4"
   }
 }
