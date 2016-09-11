@@ -4,7 +4,6 @@ var document = require('global/document')
 var onload = require('on-load')
 
 module.exports = function modalElement (contents) {
-  var modal = null
   var el = render(contents)
   function modalShow (newContents) {
     if (newContents) contents = newContents
@@ -21,6 +20,7 @@ module.exports = function modalElement (contents) {
     }
   }
   function didClickOut (e) {
+    var modal = el.children[0]
     var source = e.target
     while (source.parentNode) {
       if (source === modal) {
@@ -36,7 +36,7 @@ module.exports = function modalElement (contents) {
   return el
 
   function render (contents) {
-    modal = yo`<div class="modal">${contents}</div>`
+    var modal = yo`<div class="modal">${contents}</div>`
     var overlay = yo`<div class="modal-overlay">${modal}</div>`
     onload(overlay, function () {
       document.addEventListener('mousedown', didClickOut, false)
