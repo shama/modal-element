@@ -33,6 +33,7 @@ module.exports = function modalElement (contents) {
   el.show = modalShow
   el.hide = modalHide
   el.toggle = modalToggle
+  el.getNode = function getNode () { return el }
   return el
 
   function render (contents) {
