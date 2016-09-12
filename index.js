@@ -4,16 +4,17 @@ var document = require('global/document')
 var onload = require('on-load')
 
 module.exports = function modalElement (contents) {
-  var el = render(contents)
+  var el = render(true, contents)
+  var hidden
   function modalShow (newContents) {
     if (newContents) contents = newContents
-    yo.update(el, render(contents))
+    yo.update(el, render(true, contents))
   }
   function modalHide () {
-    el.style.display = 'none'
+    yo.update(el, render(false))
   }
   function modalToggle (newContents) {
-    if (!el || el.style.display === 'none') {
+    if (hidden) {
       modalShow(newContents)
     } else {
       modalHide()
@@ -35,22 +36,25 @@ module.exports = function modalElement (contents) {
   el.toggle = modalToggle
   return el
 
-  function render (contents) {
+  function render (show, contents) {
+    hidden = !show
     var modal = yo`<div class="modal">${contents}</div>`
     var overlay = yo`<div class="modal-overlay">${modal}</div>`
-    onload(overlay, function () {
-      document.addEventListener('mousedown', didClickOut, false)
-    }, function () {
-      document.removeEventListener('mousedown', didClickOut, false)
-    })
-    assign(overlay.style, {
-      position: 'fixed',
-      height: '100%',
-      width: '100%',
-      top: 0,
-      left: 0,
-      'z-index': '9999'
-    })
+    if (show) {
+      onload(overlay, function () {
+        document.addEventListener('mousedown', didClickOut, false)
+      }, function () {
+        document.removeEventListener('mousedown', didClickOut, false)
+      })
+      assign(overlay.style, {
+        position: 'fixed',
+        height: '100%',
+        width: '100%',
+        top: 0,
+        left: 0,
+        'z-index': '9999'
+      })
+    }
     return overlay
   }
 }
