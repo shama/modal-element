@@ -42,6 +42,7 @@ test('remove the contents', function (t) {
     <div class='test'>modal!</div>
   `)
   modal.hide()
+  t.equal(modal.style.display, 'none')
   var body = getBody(modal)
   t.equal(body.className, 'test')
   t.equal(body.innerHTML, 'modal!')
@@ -55,7 +56,9 @@ test('remove and re-create the contents', function (t) {
     <div class='test'>modal!</div>
   `)
   var body = getBody(modal)
-  t.equal(body, undefined)
+  t.equal(modal.style.display, '')
+  t.equal(body.className, 'test')
+  t.equal(body.innerHTML, 'modal!')
   t.end()
 })
 

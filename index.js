@@ -7,13 +7,13 @@ module.exports = function modalElement (contents) {
   var el = render(contents)
   function modalShow (newContents) {
     if (newContents) contents = newContents
-    el = yo.update(el, render(contents))
+    yo.update(el, render(contents))
   }
   function modalHide () {
-    el = yo.update(el, document.createTextNode(''))
+    el.style.display = 'none'
   }
   function modalToggle (newContents) {
-    if (!el || el.nodeName === '#text') {
+    if (!el || el.style.display === 'none') {
       modalShow(newContents)
     } else {
       modalHide()
