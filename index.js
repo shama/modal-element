@@ -4,17 +4,19 @@ var document = require('global/document')
 var onload = require('on-load')
 
 module.exports = function modalElement (contents) {
-  var el = render(true, contents)
-  var hidden
+  var active = true
+  var el = render(contents)
   function modalShow (newContents) {
     if (newContents) contents = newContents
-    yo.update(el, render(true, contents))
+    active = true
+    yo.update(el, render(contents))
   }
   function modalHide () {
-    yo.update(el, render(false))
+    active = false
+    yo.update(el, render())
   }
   function modalToggle (newContents) {
-    if (hidden) {
+    if (!active) {
       modalShow(newContents)
     } else {
       modalHide()
@@ -36,11 +38,10 @@ module.exports = function modalElement (contents) {
   el.toggle = modalToggle
   return el
 
-  function render (show, contents) {
-    hidden = !show
+  function render (contents) {
     var modal = yo`<div class="modal">${contents}</div>`
     var overlay = yo`<div class="modal-overlay">${modal}</div>`
-    if (show) {
+    if (active) {
       onload(overlay, function () {
         document.addEventListener('mousedown', didClickOut, false)
       }, function () {
