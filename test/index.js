@@ -62,6 +62,23 @@ test('remove and re-create the contents', function (t) {
   t.end()
 })
 
+test('toggle the contents', function (t) {
+  var modal = modalElement(yo`
+    <div class='test'>modal!</div>
+  `)
+  modal.toggle()
+  t.equal(modal.style.display, 'none')
+  body = getBody(modal)
+  t.equal(body.className, 'test')
+  t.equal(body.innerHTML, 'modal!')
+  modal.toggle()
+  t.equal(modal.style.display, '')
+  body = getBody(modal)
+  t.equal(body.className, 'test')
+  t.equal(body.innerHTML, 'modal!')
+  t.end()
+})
+
 function isModal (t, modal) {
   t.ok(modal instanceof HTMLDivElement)
   t.equal(modal.className, 'modal-overlay')
